@@ -5,6 +5,7 @@ import AddToCartButton from "@/components/AddToCartButton"
 import { client } from "@/sanity/lib/client"
 import { urlFor } from "@/sanity/lib/image"
 import RelatedProducts from "@/components/Related-Products"
+import ProductReviews from "@/components/Products-Review"
 
 type PageProps = {
   params: Promise<{ id: string }>
@@ -23,6 +24,14 @@ async function getProduct(id: string) {
   }`,
     { id },
   )
+}
+
+async function getReviews(id: string) {
+  // This is a placeholder. In a real application, you would fetch reviews from your database
+  return [
+    { id: "1", rating: 4, comment: "Great product!", userName: "John Doe" },
+    { id: "2", rating: 5, comment: "Excellent quality and fast shipping.", userName: "Jane Smith" },
+  ]
 }
 
 function ProductDetailSkeleton() {
@@ -47,6 +56,7 @@ function ProductDetailSkeleton() {
 
 async function ProductDetail({ id }: { id: string }) {
   const product = await getProduct(id)
+  const reviews = await getReviews(id)
 
   if (!product) {
     return (
@@ -94,10 +104,12 @@ export default async function ProductPage({ params }: PageProps) {
   const { id } = await params
   return (
     <Layout>
+
       <Suspense fallback={<ProductDetailSkeleton />}>
         <ProductDetail id={id} />
+        <RelatedProducts />
+        <ProductReviews productId={id} />
       </Suspense>
-      <RelatedProducts/>
     </Layout>
   )
 }
