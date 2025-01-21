@@ -74,7 +74,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </Link>
               <Link href="/cart" className="flex items-center bg-[#007580] text-white md:px-4 px-1.5 py-2 rounded-md hover:bg-[#1d5e64] transition-colors">
                 <ShoppingCart className="w-5 h-5 mr-2" />
-                <span className="mr-2">Cart</span>
+                <span className="mr-2 hidden sm:inline">Cart</span>
                 {cartItemsCount > 0 && (
                   <span className="bg-white text-[#007580] text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                     {cartItemsCount}
