@@ -19,7 +19,7 @@ export default function SavedItemsPage() {
         {savedItems.length === 0 ? (
           <p>You haven't saved any items yet.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {savedItems.map((item) => (
               <ProductCard key={item.id} _id={item.id} title={item.title} price={item.price} image={item.image} />
             ))}
