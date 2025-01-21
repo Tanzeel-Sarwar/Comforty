@@ -63,7 +63,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className=" flex items-center md:mt-0">
             <Link
               href="/saved-items"
-              className="flex items-center mr-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-[#35a3ad] transition-colors"
+              className="flex items-center mr-2 bg-gray-100 text-gray-700 lg:px-4 px-2 lg:py-2 py-2 rounded-md hover:bg-[#35a3ad] transition-colors"
             >
               <Heart className="w-5 h-5 " />
               {savedItems.length > 0 && (
@@ -73,7 +73,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               )}
             </Link>
               <Link href="/cart" className="flex items-center bg-[#007580] text-white md:px-4 px-1.5 py-2 rounded-md hover:bg-[#1d5e64] transition-colors">
-                <ShoppingCart className="w-5 h-5 mr-2" />
+                <ShoppingCart className="w-5 h-5 lg:mr-2 md:mr-2 mr-1" />
                 <span className="mr-2 hidden sm:inline">Cart</span>
                 {cartItemsCount > 0 && (
                   <span className="bg-white text-[#007580] text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
