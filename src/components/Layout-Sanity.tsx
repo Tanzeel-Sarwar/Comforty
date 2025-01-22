@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, ShoppingCart, X, HelpCircle, ChevronDown } from 'lucide-react'
-import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useCart } from '@/contexts/cart-context'
 import Image from 'next/image'
+import TopBanner from './TopBanner'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -16,34 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col mx-auto max-w-[1920px]">
       {/* Top banner */}
-      <div className="bg-[#2D2B3A] text-white text-sm py-2.5">
-        <div className="container mx-auto px-6 lg:px-16 flex justify-between items-center">
-          <p className="flex items-center gap-2">
-            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-            Free Shipping On All Orders Over $50
-          </p>
-          <div className="flex items-center gap-4 text-white/80">
-            <div className="relative group">
-              <button className="flex items-center gap-1 hover:text-white">
-                Eng
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              <div className="absolute top-full left-0 mt-1 bg-white text-gray-800 rounded-md shadow-lg hidden group-hover:block">
-                <a href="#" className="block px-4 py-2 hover:bg-gray-100">English</a>
-                <a href="#" className="block px-4 py-2 hover:bg-gray-100">Español</a>
-                <a href="#" className="block px-4 py-2 hover:bg-gray-100">Français</a>
-              </div>
-            </div>
-            <Link href="/faqs" className="hover:text-white">Faqs</Link>
-            <Link href="/contact" className="flex items-center gap-1 hover:text-white">
-              <HelpCircle className="w-4 h-4" />
-              Need Help
-            </Link>
-          </div>
-        </div>
-      </div>
+      <TopBanner/>
 
       {/* Header */}
       <header className="bg-white  top-0 z-40 border-b">
@@ -58,7 +31,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </Link>
             </div>
 
-            <div className=" flex items-center md:mt-0">
+            {/* <div className=" flex items-center md:mt-0">
               <Link href="/cart" className="flex items-center bg-[#007580] text-white md:px-4 px-1.5 py-2 rounded-md hover:bg-[#1d5e64] transition-colors">
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 <span className="mr-2">Cart</span>
@@ -74,11 +47,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               >
                 <Menu className="w-6 h-6" />
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8 py-4">
+          {/* <nav className="hidden md:flex items-center space-x-8 py-4">
             <Link href="/" className="text-[#007580] font-semibold hover:text-gray-900 transition-colors text-sm">Home</Link>
             <Link href="/products" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">Shop</Link>
             <Link href="/products" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">Product</Link>
@@ -91,7 +64,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 Contact: <span className=" text-right font-medium ">(+92) 123-456-789</span>
               </Link>
             </div>
-          </nav>
+          </nav> */}
 
 
         </div>

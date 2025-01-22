@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Heart } from "lucide-react"
 import { useSavedItems } from "@/contexts/saved-items-context"
-import toast from "react-hot-toast"
+import { toast } from "react-hot-toast"
 
 interface Product {
   _id: string
@@ -35,9 +35,9 @@ export default function WishlistButton({ product }: { product: Product }) {
   return (
     <button
       onClick={handleToggleFavorite}
-      className="flex items-center justify-center bg-white border border-gray-300 rounded-md px-4 py-2 hover:bg-[#007580] transition-colors"
+      className=" flex items-center justify-center bg-white border border-gray-300 rounded-md px-4 lg:py-3 md:py-2 py-1 hover:bg-gray-100 transition-colors"
     >
-      <Heart className={`w-5 h-5  ${isFavorite ? "text-red-500 fill-red-500" : "text-gray-600"}`} />
+      <Heart className={`w-5 h-5 mr-2 ${isFavorite ? "text-red-500 fill-red-500" : "text-gray-600"}`} />
       {isFavorite ? "Remove from Wishlist" : "Add to Wishlist"}
     </button>
   )

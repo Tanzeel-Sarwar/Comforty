@@ -2,7 +2,7 @@ import Image from 'next/image'
 
 export default function CategoryPanel() {
     return (
-    <section className="container mx-auto px-4 py-40">
+    <section className="container mx-auto px-4 py-14">
 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
   <div className="relative h-[300px] sm:h-[400px] lg:h-[500px] bg-gray-50 overflow-hidden group">
     <div className="absolute left-0 top-0 bottom-0 w-8 bg-white z-10 flex items-center justify-center">

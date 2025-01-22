@@ -1,104 +1,116 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Star } from "lucide-react"
-import toast from "react-hot-toast"
-import type { Review, ReviewFormData } from "../../types/reviews"
+import { useState, useEffect } from "react";
+import { Star } from "lucide-react";
+import toast from "react-hot-toast";
+import type { Review, ReviewFormData } from "../../types/reviews";
 
 interface ProductReviewsProps {
-  productId: string
+  productId: string;
 }
 
 export default function ProductReviews({ productId }: ProductReviewsProps) {
-  const [reviews, setReviews] = useState<Review[]>([])
-  const [loading, setLoading] = useState(true)
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
   const [newReview, setNewReview] = useState<ReviewFormData>({
     rating: 0,
     comment: "",
     userName: "",
-  })
+  });
 
   useEffect(() => {
-    const fetchReviews = async () => {
-      setLoading(true)
+    const loadReviews = () => {
+      setLoading(true);
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500))
-        const mockReviews: Review[] = [
-          {
-            id: "1",
-            rating: 5,
-            comment: "Excellent product! The quality exceeded my expectations.",
-            userName: "John Doe",
-            createdAt: new Date(Date.now() - 86400000).toISOString(),
-          },
-          {
-            id: "2",
-            rating: 4,
-            comment: "Great value for money, would recommend!",
-            userName: "Jane Smith",
-            createdAt: new Date(Date.now() - 172800000).toISOString(),
-          },
-        ]
-        setReviews(mockReviews)
+        const savedReviews = localStorage.getItem(`reviews-${productId}`);
+        if (savedReviews) {
+          setReviews(JSON.parse(savedReviews));
+        } else {
+          // Use mock reviews if no reviews are stored locally
+          const mockReviews: Review[] = [
+            {
+              id: "1",
+              rating: 5,
+              comment: "Excellent product! The quality exceeded my expectations.",
+              userName: "John Doe",
+              createdAt: new Date(Date.now() - 86400000).toISOString(),
+            },
+            {
+              id: "2",
+              rating: 4,
+              comment: "Great value for money, would recommend!",
+              userName: "Jane Smith",
+              createdAt: new Date(Date.now() - 172800000).toISOString(),
+            },
+          ];
+          setReviews(mockReviews);
+          localStorage.setItem(`reviews-${productId}`, JSON.stringify(mockReviews));
+        }
       } catch (error) {
-        toast.error("Failed to load reviews")
+        toast.error("Failed to load reviews");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchReviews()
-  }, [productId])
+    loadReviews();
+  }, [productId]);
+
+  useEffect(() => {
+    // Save reviews to localStorage whenever they change
+    localStorage.setItem(`reviews-${productId}`, JSON.stringify(reviews));
+  }, [reviews, productId]);
 
   const averageRating =
-    reviews.length > 0 ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length : 0
+    reviews.length > 0
+      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+      : 0;
 
-  const handleSubmitReview = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmitReview = (e: React.FormEvent) => {
+    e.preventDefault();
     if (newReview.rating === 0) {
-      toast.error("Please select a rating")
-      return
+      toast.error("Please select a rating");
+      return;
     }
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
       const review: Review = {
         id: Date.now().toString(),
         ...newReview,
         createdAt: new Date().toISOString(),
-      }
+      };
 
-      setReviews((prev) => [review, ...prev])
-      setNewReview({ rating: 0, comment: "", userName: "" })
-      toast.success("Review submitted successfully")
+      setReviews((prev) => [review, ...prev]);
+      setNewReview({ rating: 0, comment: "", userName: "" });
+      toast.success("Review submitted successfully");
     } catch (error) {
-      toast.error("Failed to submit review")
+      toast.error("Failed to submit review");
     }
-  }
+  };
 
   if (loading) {
-    return <ReviewsSkeleton />
+    return <ReviewsSkeleton />;
   }
 
   return (
-    <div className="mt-8">
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold">Customer Reviews</h2>
+    <div className="mt-3">
+      <hr />
+      <div className="flex items-center justify-between mt-4 mb-8">
+        <h2 className="lg:text-2xl md:text-2xl text-xl font-bold">Customer Reviews</h2>
         <div className="flex items-center gap-2">
           <div className="flex">
             {[1, 2, 3, 4, 5].map((star) => (
               <Star
                 key={star}
                 className={`w-5 h-5 ${
-                  star <= Math.round(averageRating) ? "text-blue-500 fill-blue-500" : "text-gray-300"
+                  star <= Math.round(averageRating)
+                    ? "text-blue-500 fill-blue-500"
+                    : "text-gray-300"
                 }`}
               />
             ))}
           </div>
-          <span className="text-sm text-gray-600">
+          <span className="lg:text-sm md:text-sm text-xs text-gray-600">
             {averageRating.toFixed(1)} out of 5 ({reviews.length} reviews)
           </span>
         </div>
@@ -119,7 +131,11 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                   className="focus:outline-none"
                 >
                   <Star
-                    className={`w-6 h-6 ${star <= newReview.rating ? "text-blue-500 fill-blue-500" : "text-gray-300"}`}
+                    className={`w-6 h-6 ${
+                      star <= newReview.rating
+                        ? "text-blue-500 fill-blue-500"
+                        : "text-gray-300"
+                    }`}
                   />
                 </button>
               ))}
@@ -133,8 +149,10 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
               type="text"
               id="userName"
               value={newReview.userName}
-              onChange={(e) => setNewReview({ ...newReview, userName: e.target.value })}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) =>
+                setNewReview({ ...newReview, userName: e.target.value })
+              }
+              className="w-full px-3 lg:py-2 md:py-2 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -146,7 +164,9 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
               id="comment"
               rows={4}
               value={newReview.comment}
-              onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+              onChange={(e) =>
+                setNewReview({ ...newReview, comment: e.target.value })
+              }
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -161,19 +181,25 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
       </form>
 
       {/* Reviews List */}
-      <div className="space-y-6">
+      <div className="lg:grid md:grid grid-cols-2 gap-12">
         {reviews.map((review) => (
           <div key={review.id} className="border-b pb-6">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <span className="font-medium">{review.userName}</span>
-                <span className="text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</span>
+                <span className="text-sm text-gray-500">
+                  {new Date(review.createdAt).toLocaleDateString()}
+                </span>
               </div>
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
-                    className={`w-4 h-4 ${star <= review.rating ? "text-blue-500 fill-blue-500" : "text-gray-300"}`}
+                    className={`w-4 h-4 ${
+                      star <= review.rating
+                        ? "text-blue-500 fill-blue-500"
+                        : "text-gray-300"
+                    }`}
                   />
                 ))}
               </div>
@@ -183,7 +209,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 function ReviewsSkeleton() {
@@ -201,7 +227,6 @@ function ReviewsSkeleton() {
         </div>
       </div>
 
-      {/* Skeleton Review Form */}
       <div className="bg-gray-50 p-6 rounded-lg mb-8">
         <div className="h-6 w-32 bg-gray-200 rounded mb-4"></div>
         <div className="space-y-4">
@@ -216,7 +241,6 @@ function ReviewsSkeleton() {
         </div>
       </div>
 
-      {/* Skeleton Reviews */}
       <div className="space-y-6">
         {[...Array(3)].map((_, i) => (
           <div key={i} className="border-b pb-6">
@@ -239,6 +263,5 @@ function ReviewsSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }
-
