@@ -12,19 +12,18 @@ export default function OrderCompleted() {
   const { clearCart } = useCart()
 
   useEffect(() => {
-    // Clear the cart when the order is completed
     clearCart()
   }, [clearCart])
 
   return (
     <Layout>
       <div className="container mx-auto py-16 text-center">
-        <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-6" />
-        <h1 className="text-3xl font-bold mb-4">Order Completed!</h1>
-        <p className="text-xl text-gray-600 mb-8">
+        <CheckCircle className="lg:w-16 md:w-16 w-14 lg:h-16 md:h-16 h-14 text-green-500 mx-auto mb-6" />
+        <h1 className="lg:text-3xl md:text-3xl text-2xl font-bold mb-4">Order Completed!</h1>
+        <p className="lg:text-xl md:text-xl sm:text-lg text-base text-gray-600 mb-8">
           Thank you for your purchase. Your order has been successfully placed.
         </p>
-        <p className="text-gray-600 mb-8">
+        <p className="lg:text-xl md:text-xl sm:text-lg text-base text-gray-600 mb-8">
           You will receive an email confirmation shortly with your order details.
         </p>
         <Button

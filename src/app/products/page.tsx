@@ -8,6 +8,7 @@ import ProductCard from '@/components/Product-Card';
 import { useCart } from '@/contexts/cart-context';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import NewsLetter from '@/components/NewsLetter';
+import InstagramFeed from '../../components/InstagramFeed';
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
@@ -104,23 +105,22 @@ const ProductList = () => {
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {loading
             ? Array.from({ length: productsPerPage }).map((_, index) => (
-                <div key={index} className="animate-pulse space-y-4 rounded-lg bg-gray-100 p-4">
-                  <div className="aspect-square bg-gray-300 rounded-md" />
-                  <div className="h-4 bg-gray-300 rounded w-3/4" />
-                  <div className="h-6 bg-gray-300 rounded w-1/2" />
-                </div>
-              ))
+              <div key={index} className="animate-pulse space-y-4 rounded-lg bg-gray-100 p-4">
+                <div className="aspect-square bg-gray-300 rounded-md" />
+                <div className="h-4 bg-gray-300 rounded w-3/4" />
+                <div className="h-6 bg-gray-300 rounded w-1/2" />
+              </div>
+            ))
             : products.map((product) => (
-                <ProductCard
-                  key={product._id}
-                  _id={product._id}
-                  title={product.title}
-                  price={product.price}
-                  image={product.imageUrl}
-                  isNew={product.isNew}
-                  isSale={product.isSale}
-                />
-              ))}
+              <ProductCard
+                key={product._id}
+                _id={product._id}
+                title={product.title}
+                price={product.price}
+                image={product.imageUrl}
+                isNew={product.isNew}
+                isSale={product.isSale} priceWithoutDiscount={0} />
+            ))}
         </div>
       )}
 
@@ -130,9 +130,8 @@ const ProductList = () => {
         <button
           onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
           disabled={currentPage === 1}
-          className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
-            currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 text-white'
-          }`}
+          className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 text-white'
+            }`}
         >
           <ArrowLeft />
         </button>
@@ -144,9 +143,8 @@ const ProductList = () => {
             <button
               key={page}
               onClick={() => handlePageChange(page)}
-              className={`px-4 py-2 rounded-lg ${
-                currentPage === page ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
-              }`}
+              className={`px-4 py-2 rounded-lg ${currentPage === page ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
+                }`}
             >
               {page}
             </button>
@@ -157,9 +155,8 @@ const ProductList = () => {
         <button
           onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
-            currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 text-white'
-          }`}
+          className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 text-white'
+            }`}
         >
           <ArrowRight />
         </button>
@@ -175,7 +172,8 @@ export default function ProductCards() {
         <Suspense fallback={<div>Loading...</div>}>
           <ProductList />
         </Suspense>
-        <NewsLetter />
+          <NewsLetter />
+          <InstagramFeed />
       </div>
     </Layout>
   );

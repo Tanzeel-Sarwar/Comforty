@@ -26,8 +26,7 @@ async function getProduct(id: string) {
   )
 }
 
-async function getReviews(id: string) {
-  // This is a placeholder. In a real application, you would fetch reviews from your database
+async function getReviews(_id: string) {
   return [
     { id: "1", rating: 4, comment: "Great product!", userName: "John Doe" },
     { id: "2", rating: 5, comment: "Excellent quality and fast shipping.", userName: "Jane Smith" },
@@ -89,11 +88,11 @@ async function ProductDetail({ id }: { id: string }) {
         {/* Product Info */}
         <div className="flex flex-col justify-center">
           <h1 className="text-3xl md:text-4xl font-extrabold mb-4 text-[#272343]">{product.title}</h1>
-          <div className="inline-block bg-[#007580] text-white px-4 py-2 rounded-full text-sm mb-6">
+          <div className="inline-block font-semibold bg-[#007580] text-white px-4 py-2 rounded-full lg:text-base text-sm  mb-6">
             ${product.price.toFixed(2)} USD
           </div>
           <p className="text-gray-600 mb-8">{product.description}</p>
-          <AddToCartButton product={product} />
+              <AddToCartButton product={product} />
         </div>
       </div>
     </main>

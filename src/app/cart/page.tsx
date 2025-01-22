@@ -21,7 +21,25 @@ export default function Cart() {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const shipping = 10
   const total = subtotal + shipping
-  
+
+  // const handleCheckout = () => {
+  //   Add items to Snipcart
+  //   items.forEach(item => {
+  //     window.Snipcart.api.cart.items.add({
+  //       id: item.id,
+  //       name: item.title,
+  //       price: item.price,
+  //       url: `/product/${item.id}`,
+  //       description: item.title,
+  //       image: item.image,
+  //       quantity: item.quantity
+  //     });
+  //   });
+
+  //   clearCart()
+  //   router.push('/order-completed')
+  // }
+
   const handleCheckout = () => {
     router.push('/checkout')
   }
@@ -119,7 +137,7 @@ export default function Cart() {
                 </div>
                 <Button
                   onClick={handleCheckout}
-                  className="w-full bg-[#007580] text-white py-3 rounded-md hover:bg-[#25595e] transition-colors"
+                  className="  w-full bg-[#007580] text-white lg:py-4 py:3 rounded-full hover:bg-[#25595e] transition-colors"
                 >
                   Proceed to Checkout
                 </Button>
