@@ -63,6 +63,7 @@ const FeaturedProducts = () => {
                   image={product.imageUrl}
                   isNew={product.isNew}
                   isSale={product.isSale}
+                   priceWithoutDiscount={0} 
                 />
               ))}
         </div>
