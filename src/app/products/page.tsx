@@ -5,7 +5,6 @@ import { createClient } from '@sanity/client';
 import { useSearchParams } from 'next/navigation';
 import Layout from '@/components/Layout';
 import ProductCard from '@/components/Product-Card';
-import { useCart } from '@/contexts/cart-context';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import NewsLetter from '@/components/NewsLetter';
 import InstagramFeed from '../../components/InstagramFeed';
