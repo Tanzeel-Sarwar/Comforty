@@ -51,7 +51,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex flex-col h-0 flex-1 bg-white border-r">
             <div className="flex items-center h-16 flex-shrink-0 px-4 bg-[#007580]">
               <Image src="/images/Logo Icon.png" alt="Comforty Logo" width={32} height={32} />
-              <span className="ml-2 text-xl font-bold text-white">Admin</span>
+              <span className="ml-2 text-xl font-bold text-white">Comforty</span>
             </div>
             <div className="flex-1 flex flex-col overflow-y-auto">
               <nav className="flex-1 px-2 py-4 space-y-1">
