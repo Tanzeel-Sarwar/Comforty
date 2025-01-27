@@ -1,10 +1,9 @@
-import { ClerkProvider } from '@clerk/nextjs'
 import { CartProvider } from "@/contexts/cart-context"
 import { SavedItemsProvider } from "@/contexts/saved-items-context"
 import { AuthProvider } from "@/contexts/auth-context"
-import { LoadingProvider } from "@/contexts/loading-context"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import { ClerkProvider } from '@clerk/nextjs'
 import { Toaster } from "react-hot-toast"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -23,21 +22,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-
     <ClerkProvider>
       <html lang="en">
-        <head>
-        </head>
         <body className={inter.className}>
           <AuthProvider>
-            <LoadingProvider>
-              <CartProvider>
-                <SavedItemsProvider>
-                  {children}
-                  <Toaster position="bottom-right" />
-                </SavedItemsProvider>
-              </CartProvider>
-            </LoadingProvider>
+            <CartProvider>
+              <SavedItemsProvider>
+                {children}
+                <Toaster position="bottom-right" />
+              </SavedItemsProvider>
+            </CartProvider>
           </AuthProvider>
         </body>
       </html>
