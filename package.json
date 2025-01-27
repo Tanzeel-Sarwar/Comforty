@@ -1,5 +1,5 @@
 {
-  "name": "ui-ux_hackathon_by_tanzeel",
+  "name": "Comforty",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,10 +10,13 @@
     "migrate": "node scripts/migrate.mjs"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.10.3",
     "@radix-ui/react-label": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.0",
     "@sanity/image-url": "^1.1.0",
     "@sanity/vision": "^3.70.0",
+    "@stripe/react-stripe-js": "^3.1.1",
+    "@stripe/stripe-js": "^5.5.0",
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
@@ -29,6 +32,7 @@
     "react-icons": "^5.4.0",
     "recharts": "^2.15.0",
     "sanity": "^3.70.0",
+    "stripe": "^17.6.0",
     "styled-components": "^6.1.14",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7"
