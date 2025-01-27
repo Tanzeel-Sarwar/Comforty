@@ -1,9 +1,10 @@
+import { ClerkProvider } from '@clerk/nextjs'
 import { CartProvider } from "@/contexts/cart-context"
 import { SavedItemsProvider } from "@/contexts/saved-items-context"
 import { AuthProvider } from "@/contexts/auth-context"
+import { LoadingProvider } from "@/contexts/loading-context"
 import { Inter } from "next/font/google"
 import "./globals.css"
-// import Script from "next/script"
 import { Toaster } from "react-hot-toast"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -22,45 +23,25 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <head>
-        {/* <link rel="preconnect" href="https://app.snipcart.com" />
-        <link rel="preconnect" href="https://cdn.snipcart.com" />
-        <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.2.0/default/snipcart.css" />
-        <style>{`
-          .snipcart-modal__container {
-            z-index: 100000;
-          }
-          .snipcart-cart-button--highlight {
-            background-color: #007580 !important;
-          }
-          .snipcart-cart-button--highlight:hover {
-            background-color: #25595e !important;
-          }
-        `}</style> */}
-      </head>
-      <body className={inter.className}>
-        {/* <Script async src="https://cdn.snipcart.com/themes/v3.2.0/default/snipcart.js" strategy="afterInteractive" /> */}
 
-        {/* <div
-          hidden
-          id="snipcart"
-          data-api-key="ZTJiZTgwYmEtOThmMi00ZjVkLTg5MDctM2RmY2JmOTRkNjI0NjM4NzI0Njc5NTc0MzgwNzgz"
-          data-config-modal-style="none"
-          data-config-add-product-behavior="none"
-          data-config-custom-css="https://cdn.jsdelivr.net/npm/@snipcart/theme@1.0.1/themes/base/snipcart.min.css"
-        ></div> */}
-
-        <AuthProvider>
-          <CartProvider>
-            <SavedItemsProvider>
-              {children}
-              <Toaster position="bottom-right" />
-            </SavedItemsProvider>
-          </CartProvider>
-        </AuthProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <head>
+        </head>
+        <body className={inter.className}>
+          <AuthProvider>
+            <LoadingProvider>
+              <CartProvider>
+                <SavedItemsProvider>
+                  {children}
+                  <Toaster position="bottom-right" />
+                </SavedItemsProvider>
+              </CartProvider>
+            </LoadingProvider>
+          </AuthProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }
 

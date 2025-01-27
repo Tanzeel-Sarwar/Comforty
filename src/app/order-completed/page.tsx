@@ -1,37 +1,32 @@
-'use client'
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { CheckCircle } from "lucide-react"
+import Layout from "@/components/Layout"
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Layout from '@/components/Layout'
-import { Button } from '@/components/ui/button'
-import { useCart } from '@/contexts/cart-context'
-import { CheckCircle } from 'lucide-react'
-
-export default function OrderCompleted() {
-  const router = useRouter()
-  const { clearCart } = useCart()
-
-  useEffect(() => {
-    clearCart()
-  }, [clearCart])
-
+export default function OrderCompletedPage() {
   return (
     <Layout>
-      <div className="container mx-auto py-16 text-center">
-        <CheckCircle className="lg:w-16 md:w-16 w-14 lg:h-16 md:h-16 h-14 text-green-500 mx-auto mb-6" />
-        <h1 className="lg:text-3xl md:text-3xl text-2xl font-bold mb-4">Order Completed!</h1>
-        <p className="lg:text-xl md:text-xl sm:text-lg text-base text-gray-600 mb-8">
-          Thank you for your purchase. Your order has been successfully placed.
-        </p>
-        <p className="lg:text-xl md:text-xl sm:text-lg text-base text-gray-600 mb-8">
-          You will receive an email confirmation shortly with your order details.
-        </p>
-        <Button
-          onClick={() => router.push('/')}
-          className="bg-[#007580] text-white py-3 px-6 rounded-md hover:bg-[#25595e] transition-colors"
-        >
-          Continue Shopping
-        </Button>
+      <div className="container mx-auto px-4 py-8">
+        <Card className="max-w-2xl mx-auto">
+          <CardHeader>
+            <div className="flex justify-center mb-4">
+              <CheckCircle className="w-16 h-16 text-green-500" />
+            </div>
+            <CardTitle className="text-2xl font-bold text-center">Order Completed!</CardTitle>
+          </CardHeader>
+          <CardContent className="text-center">
+            <p className="text-lg mb-6">
+              Thank you for your purchase! Your order has been successfully processed and your cart has been cleared.
+            </p>
+            <p className="mb-6">
+              An email confirmation has been sent to your registered email address with the order details.
+            </p>
+            <Button asChild>
+              <Link href="/">Return to Home</Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   )
