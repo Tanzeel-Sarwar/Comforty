@@ -7,18 +7,19 @@ import Layout from '@/components/Layout'
 import { Heart, Trash2 } from 'lucide-react'
 import { useCart } from '@/contexts/cart-context'
 import { Button } from '@/components/ui/button'
-import { useAuth, SignInButton, SignUpButton } from "@clerk/nextjs"
+import CheckoutProcess from '@/components/CheckoutProcess'
 
-// declare global {
-//   interface Window {
-//     Snipcart: any;
-//   }
-// }
+
+declare global {
+  interface Window {
+    Snipcart: any;
+  }
+}
 
 export default function Cart() {
   const router = useRouter()
   const { items, clearCart, updateQuantity, removeItem } = useCart()
-  const { isSignedIn } = useAuth()
+
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const shipping = 10
   const total = subtotal + shipping
@@ -136,32 +137,13 @@ export default function Cart() {
                     <span>${total.toFixed(2)}</span>
                   </div>
                 </div>
-
+                <CheckoutProcess/>
                 {/* <Button
                   onClick={handleCheckout}
                   className="  w-full bg-[#007580] text-white lg:py-4 py:3 rounded-full hover:bg-[#25595e] transition-colors"
                 >
                   Proceed to Checkout
                 </Button> */}
-                {isSignedIn ? (
-                  <Button onClick={handleCheckout} className="w-full bg-[#007580] hover:bg-[#006570]">
-                    Proceed to Checkout
-                  </Button>
-                ) : (
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-semibold">Sign in to proceed with checkout</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <SignInButton mode="modal">
-                        <Button className="w-full bg-[#007580] hover:bg-[#006570]">Sign In</Button>
-                      </SignInButton>
-                      <SignUpButton mode="modal">
-                        <Button variant="outline" className="w-full">
-                          Sign Up
-                        </Button>
-                      </SignUpButton>
-                    </div>  
-                  </div>
-                )}
               </div>
             </div>
           </div>
