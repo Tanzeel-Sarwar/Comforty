@@ -1,18 +1,20 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { Menu, ShoppingCart, X, Heart } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { useCart } from '@/contexts/cart-context'
-import Image from 'next/image'
-import { useSavedItems } from '@/contexts/saved-items-context'
-import TopBanner from './TopBanner'
-import Footer from './Footer'
+import { useState } from "react"
+import Link from "next/link"
+import { Menu, ShoppingCart, X, Heart, User } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { useCart } from "@/contexts/cart-context"
+import Image from "next/image"
+import { useSavedItems } from "@/contexts/saved-items-context"
+import TopBanner from "./TopBanner"
+import Footer from "./Footer"
+import { UserButton, SignInButton, useAuth } from "@clerk/nextjs"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { items } = useCart()
+  const { isSignedIn } = useAuth()
   const { savedItems } = useSavedItems()
   const cartItemsCount = items.reduce((sum, item) => sum + item.quantity, 0)
 
@@ -24,8 +26,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {/* Header */}
       <header className="bg-white sticky top-0 z-40 border-b">
         <div className="container relative mx-auto px-6 lg:px-16">
-          <div className="bg-[#F0F2F3] flex md:flex-row items-start md:items-center justify-between py-4">
-            <div className="flex flex-col items-start">
+          <div className="bg-[#F0F2F3] flex md:flex-row items-center justify-between py-4">
+            <div className="flex flex-col items-start md:items-center">
               <Link href="/" className="flex items-center">
                 <div>
                   <Image src="/images/Logo Icon.png" alt="Comforty Logo" width={32} height={32} />
@@ -33,48 +35,71 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <span className="ml-2 text-xl font-bold">Comforty</span>
               </Link>
             </div>
-
-            <div className=" flex items-center md:mt-0">
+            <div className="flex items-center space-x-2 md:space-x-4">
               <Link
                 href="/saved-items"
-                className="flex items-center mr-2 bg-gray-100 text-gray-700 lg:px-3 px-2 lg:py-2 py-2 rounded-md hover:bg-[#ff2e2e] transition-colors"
+                className="hidden md:flex items-center  bg-gray-100 text-gray-700 lg:px-3 px-2 lg:py-2 py-2 rounded-md hover:bg-[#ff2e2e] transition-colors"
               >
                 <Heart className="w-5 h-5 " />
                 {savedItems.length > 0 && (
-                  <span className="bg-[#1d5e64] text-white text-xs ml-2 font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  <span className="bg-[#1d5e64] text-white text-xs  font-bold w-5 h-5 rounded-full flex items-center justify-center">
                     {savedItems.length}
                   </span>
                 )}
               </Link>
-              <Link href="/cart" className="flex items-center bg-[#007580] text-white md:px-4 px-1.5 py-2 rounded-md hover:bg-[#1d5e64] transition-colors">
+              <Link
+                href="/cart"
+                className="hidden md:flex items-center bg-[#007580] text-white md:px-4 px-1.5 py-2 mr-3 rounded-md hover:bg-[#1d5e64] transition-colors"
+              >
                 <ShoppingCart className="w-5 h-5 lg:mr-2 md:mr-2 mr-1" />
-                <span className="mr-2 hidden sm:inline">Cart</span>
+                <span className="mr-2">Cart</span>
                 {cartItemsCount > 0 && (
                   <span className="bg-white text-[#007580] text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                     {cartItemsCount}
                   </span>
                 )}
               </Link>
+              {isSignedIn ? (
+                <UserButton afterSignOutUrl="/" />
+              ) : (
+                <SignInButton mode="modal">
+                  <button className="text-gray-600 hover:text-gray-900">
+                    <User size={24} />
+                  </button>
+                </SignInButton>
+              )}
               <button
                 className="ml-4 md:hidden text-gray-600 hover:text-gray-900"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
-                <Menu className="w-6 h-6" />
+                <Menu className="ml-1 w-7 h-7" />
               </button>
             </div>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8 py-4">
-            <Link href="/" className="text-[#007580] font-semibold hover:text-gray-900 transition-colors text-sm">Home</Link>
-            <Link href="/products" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">Shop</Link>
-            <Link href="/products" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">Product</Link>
-            <Link href="/" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">Pages</Link>
-            <Link href="/about" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">About</Link>
-            <Link href="/contact" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">Contact</Link>
+            <Link href="/" className="text-[#007580] font-semibold hover:text-gray-900 transition-colors text-sm">
+              Home
+            </Link>
+            <Link href="/products" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
+              Shop
+            </Link>
+            <Link href="/products" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
+              Product
+            </Link>
+            <Link href="/" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
+              Pages
+            </Link>
+            <Link href="/about" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
+              About
+            </Link>
+            <Link href="/contact" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
+              Contact
+            </Link>
 
             <div className="text-sm">
-              <Link href="/contact" className=' hover:text-teal-700'>
+              <Link href="/contact" className=" hover:text-teal-700">
                 Contact: <span className=" text-right font-medium ">(+92) 123-456-789</span>
               </Link>
             </div>
@@ -154,17 +179,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         </div>
-      </header >
+      </header>
 
       <main className="flex-grow">
-        <div className="container mx-auto px-6 lg:px-16 py-8">
-          {children}
-        </div>
+        <div className="container mx-auto px-6 lg:px-16 py-8">{children}</div>
       </main>
 
       {/* Footer */}
       <Footer />
-    </div >
+    </div>
   )
 }
 

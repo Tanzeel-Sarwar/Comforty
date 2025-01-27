@@ -56,15 +56,14 @@ const FeaturedProducts = () => {
               ))
             : products.map((product) => (
                 <ProductCard
-                  key={product._id}
-                  _id={product._id}
-                  title={product.title}
-                  price={product.price}
-                  image={product.imageUrl}
-                  isNew={product.isNew}
-                  isSale={product.isSale}
-                   priceWithoutDiscount={0} 
-                />
+                key={product._id}
+                _id={product._id}
+                title={product.title}
+                price={product.price}
+                image={product.imageUrl}
+                isNew={product.isNew}
+                isSale={product.isSale} 
+                priceWithoutDiscount={0}                />
               ))}
         </div>
       </div>
