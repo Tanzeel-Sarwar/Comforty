@@ -6,10 +6,17 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { sanityClient } from "@/lib/sanity"
 import { useAdminAuth } from "@/hooks/useAdminAuth"
-import { Input } from "@/components/ui/input"
 import { toast } from "@/hooks/use-toast"
 import Image from "next/image"
-import Loader from "@/app/admin/Loader"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import Loader from "../Loader"
 
 interface Category {
   _id: string
@@ -18,11 +25,15 @@ interface Category {
   products: number
 }
 
+interface CategoryDetails extends Category {
+  productList?: { title: string; price: number }[]
+}
+
 export default function CategoriesPage() {
   useAdminAuth()
   const [categories, setCategories] = useState<Category[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [editingId, setEditingId] = useState<string | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<CategoryDetails | null>(null)
 
   useEffect(() => {
     fetchCategories()
@@ -35,7 +46,7 @@ export default function CategoriesPage() {
           _id,
           title,
           "image": image.asset->url,
-          products
+          "products": count(*[_type == "products" && references(^._id)])
         }
       `)
       setCategories(fetchedCategories)
@@ -51,30 +62,29 @@ export default function CategoriesPage() {
     }
   }
 
-  const handleEdit = (id: string) => {
-    setEditingId(id)
-  }
-
-  const handleSave = async (category: Category) => {
+  const fetchCategoryDetails = async (id: string) => {
     try {
-      await sanityClient
-        .patch(category._id)
-        .set({
-          title: category.title,
-          products: category.products,
-        })
-        .commit()
-      setEditingId(null)
-      toast({
-        title: "Success",
-        description: "Category updated successfully.",
-      })
-      fetchCategories()
+      const category = await sanityClient.fetch<CategoryDetails>(
+        `
+        *[_type == "categories" && _id == $id][0] {
+          _id,
+          title,
+          "image": image.asset->url,
+          "products": count(*[_type == "products" && references(^._id)]),
+          "productList": *[_type == "products" && references(^._id)] {
+            title,
+            price
+          }
+        }
+      `,
+        { id },
+      )
+      setSelectedCategory(category)
     } catch (error) {
-      console.error("Error updating category:", error)
+      console.error("Error fetching category details:", error)
       toast({
         title: "Error",
-        description: "Failed to update category. Please try again.",
+        description: "Failed to fetch category details. Please try again.",
         variant: "destructive",
       })
     }
@@ -109,7 +119,9 @@ export default function CategoriesPage() {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Categories</h2>
         <Button asChild>
-          <Link href="/admin/categories/new">Add New Category</Link>
+          <a href="/studio/structure/categories" target="_blank" rel="noopener noreferrer">
+            Add New Category
+          </a>
         </Button>
       </div>
 
@@ -128,47 +140,38 @@ export default function CategoriesPage() {
               <TableCell>
                 <Image src={category.image || "/placeholder.svg"} alt={category.title} width={50} height={50} />
               </TableCell>
+              <TableCell>{category.title}</TableCell>
+              <TableCell>{category.products}</TableCell>
               <TableCell>
-                {editingId === category._id ? (
-                  <Input
-                    value={category.title}
-                    onChange={(e) =>
-                      setCategories(
-                        categories.map((c) => (c._id === category._id ? { ...c, title: e.target.value } : c)),
-                      )
-                    }
-                  />
-                ) : (
-                  category.title
-                )}
-              </TableCell>
-              <TableCell>
-                {editingId === category._id ? (
-                  <Input
-                    type="number"
-                    value={category.products}
-                    onChange={(e) =>
-                      setCategories(
-                        categories.map((c) =>
-                          c._id === category._id ? { ...c, products: Number(e.target.value) } : c,
-                        ),
-                      )
-                    }
-                  />
-                ) : (
-                  category.products
-                )}
-              </TableCell>
-              <TableCell>
-                {editingId === category._id ? (
-                  <Button onClick={() => handleSave(category)} className="mr-2">
-                    Save
-                  </Button>
-                ) : (
-                  <Button onClick={() => handleEdit(category._id)} variant="outline" className="mr-2">
-                    Edit
-                  </Button>
-                )}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="mr-2" onClick={() => fetchCategoryDetails(category._id)}>
+                      Show Details
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>{selectedCategory?.title}</DialogTitle>
+                      <DialogDescription>
+                        <div className="mt-2">
+                          <p>
+                            <strong>Number of Products:</strong> {selectedCategory?.products}
+                          </p>
+                          <p>
+                            <strong>Products:</strong>
+                          </p>
+                          <ul>
+                            {selectedCategory?.productList?.map((product, index) => (
+                              <li key={index}>
+                                {product.title} - ${product.price.toFixed(2)}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
                 <Button onClick={() => handleDelete(category._id)} variant="destructive">
                   Delete
                 </Button>

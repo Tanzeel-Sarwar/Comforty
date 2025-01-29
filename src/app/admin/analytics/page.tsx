@@ -2,59 +2,93 @@
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { sanityClient } from "@/lib/sanity"
 import Loader from "../Loader"
 import { useAdminAuth } from "@/hooks/useAdminAuth"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts"
+import { products, categories } from "@/lib/data"
 
 interface AnalyticsData {
-  totalProducts: number
-  totalCategories: number
   totalRevenue: number
+  averageOrderValue: number
+  topSellingProducts: {
+    name: string
+    sales: number
+  }[]
+  salesByCategory: {
+    name: string
+    value: number
+  }[]
   monthlySales: {
     month: string
     sales: number
   }[]
 }
 
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"]
+
 export default function AnalyticsPage() {
   useAdminAuth()
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchAnalyticsData = async () => {
-      try {
-        const [totalProducts, totalCategories, totalRevenue, monthlySales] = await Promise.all([
-          sanityClient.fetch<number>('count(*[_type == "products"])'),
-          sanityClient.fetch<number>('count(*[_type == "categories"])'),
-          sanityClient.fetch<number>('*[_type == "products"] { "revenue": price * inventory } | sum(revenue)'),
-          sanityClient.fetch<AnalyticsData["monthlySales"]>(`
-            *[_type == "products"] {
-              "month": dateTime(_createdAt),
-              "sales": price * inventory
-            } | group by dateTime(month, "month") {
-              "month": dateTime(month, "yyyy-MM"),
-              "sales": sum(sales)
-            } | order(month asc)
-          `),
-        ])
+  // useEffect(() => {
+  //   const calculateAnalyticsData = () => {
+  //     // Calculate total revenue
+  //     const totalRevenue = products.reduce((sum, product) => sum + product.price * product.inventory, 0)
 
-        setAnalyticsData({
-          totalProducts,
-          totalCategories,
-          totalRevenue,
-          monthlySales,
-        })
-      } catch (error) {
-        console.error("Error fetching analytics data:", error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
+  //     // Calculate average order value (assuming each product is an order for simplicity)
+  //     const averageOrderValue = totalRevenue / products.length
 
-    fetchAnalyticsData()
-  }, [])
+  //     // Get top selling products
+  //     const topSellingProducts = [...products]
+  //       .sort((a, b) => b.inventory - a.inventory)
+  //       .slice(0, 5)
+  //       .map((product) => ({
+  //         name: product.title,
+  //         sales: product.inventory,
+  //       }))
+
+  //     // Calculate sales by category
+  //     const salesByCategory = categories.map((category) => ({
+  //       name: category.title,
+  //       value: products
+  //         .filter((product) => product.category === category._id)
+  //         .reduce((sum, product) => sum + product.inventory, 0),
+  //     }))
+
+  //     // Generate mock monthly sales data (as we don't have real date information)
+  //     const monthlySales = Array.from({ length: 12 }, (_, i) => {
+  //       const month = new Date(2023, i).toLocaleString("default", { month: "short" })
+  //       return {
+  //         month,
+  //         sales: Math.floor(Math.random() * 10000) + 5000, // Random sales between 5000 and 15000
+  //       }
+  //     })
+
+  //     setAnalyticsData({
+  //       totalRevenue,
+  //       averageOrderValue,
+  //       topSellingProducts,
+  //       salesByCategory,
+  //       monthlySales,
+  //     })
+
+  //     setIsLoading(false)
+  //   }
+
+  //   calculateAnalyticsData()
+  // }, [])
 
   if (isLoading) {
     return <Loader />
@@ -68,29 +102,21 @@ export default function AnalyticsPage() {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Analytics</h2>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Products</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{analyticsData.totalProducts}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Categories</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{analyticsData.totalCategories}</div>
-          </CardContent>
-        </Card>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${analyticsData.totalRevenue.toFixed(2)}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Average Order Value</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${analyticsData.averageOrderValue.toFixed(2)}</div>
           </CardContent>
         </Card>
       </div>
@@ -100,7 +126,7 @@ export default function AnalyticsPage() {
           <CardTitle>Monthly Sales</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={400}>
+          <ResponsiveContainer width="100%" height={300}>
             <LineChart data={analyticsData.monthlySales}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
@@ -111,6 +137,50 @@ export default function AnalyticsPage() {
           </ResponsiveContainer>
         </CardContent>
       </Card>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Top Selling Products</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {analyticsData.topSellingProducts.map((product, index) => (
+                <li key={index} className="flex justify-between items-center">
+                  <span>{product.name}</span>
+                  <span className="font-medium">{product.sales} sold</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Sales by Category</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={analyticsData.salesByCategory}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#8884d8"
+                  label
+                >
+                  {analyticsData.salesByCategory.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

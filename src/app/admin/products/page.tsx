@@ -6,9 +6,16 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { sanityClient } from "@/lib/sanity"
 import { useAdminAuth } from "@/hooks/useAdminAuth"
-import { Input } from "@/components/ui/input"
 import { toast } from "@/hooks/use-toast"
 import Image from "next/image"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import Loader from "../Loader"
 
 interface Product {
@@ -28,7 +35,7 @@ export default function ProductsPage() {
   useAdminAuth()
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [editingId, setEditingId] = useState<string | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
   useEffect(() => {
     fetchProducts()
@@ -63,39 +70,6 @@ export default function ProductsPage() {
     }
   }
 
-  const handleEdit = (id: string) => {
-    setEditingId(id)
-  }
-
-  const handleSave = async (product: Product) => {
-    try {
-      await sanityClient
-        .patch(product._id)
-        .set({
-          title: product.title,
-          price: product.price,
-          priceWithoutDiscount: product.priceWithoutDiscount,
-          badge: product.badge,
-          description: product.description,
-          inventory: product.inventory,
-        })
-        .commit()
-      setEditingId(null)
-      toast({
-        title: "Success",
-        description: "Product updated successfully.",
-      })
-      fetchProducts()
-    } catch (error) {
-      console.error("Error updating product:", error)
-      toast({
-        title: "Error",
-        description: "Failed to update product. Please try again.",
-        variant: "destructive",
-      })
-    }
-  }
-
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
@@ -125,7 +99,9 @@ export default function ProductsPage() {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Products</h2>
         <Button asChild>
-          <Link href="/admin/products/new">Add New Product</Link>
+          <a href="/studio/structure/products" target="_blank" rel="noopener noreferrer">
+            Add New Product
+          </a>
         </Button>
       </div>
 
@@ -148,88 +124,50 @@ export default function ProductsPage() {
               <TableCell>
                 <Image src={product.image || "/placeholder.svg"} alt={product.title} width={50} height={50} />
               </TableCell>
-              <TableCell>
-                {editingId === product._id ? (
-                  <Input
-                    value={product.title}
-                    onChange={(e) =>
-                      setProducts(products.map((p) => (p._id === product._id ? { ...p, title: e.target.value } : p)))
-                    }
-                  />
-                ) : (
-                  product.title
-                )}
-              </TableCell>
-              <TableCell>
-                {editingId === product._id ? (
-                  <Input
-                    type="number"
-                    value={product.price}
-                    onChange={(e) =>
-                      setProducts(
-                        products.map((p) => (p._id === product._id ? { ...p, price: Number(e.target.value) } : p)),
-                      )
-                    }
-                  />
-                ) : (
-                  `$${product.price.toFixed(2)}`
-                )}
-              </TableCell>
-              <TableCell>
-                {editingId === product._id ? (
-                  <Input
-                    type="number"
-                    value={product.priceWithoutDiscount}
-                    onChange={(e) =>
-                      setProducts(
-                        products.map((p) =>
-                          p._id === product._id ? { ...p, priceWithoutDiscount: Number(e.target.value) } : p,
-                        ),
-                      )
-                    }
-                  />
-                ) : (
-                  `$${product.priceWithoutDiscount}`
-                )}
-              </TableCell>
-              <TableCell>
-                {editingId === product._id ? (
-                  <Input
-                    value={product.badge}
-                    onChange={(e) =>
-                      setProducts(products.map((p) => (p._id === product._id ? { ...p, badge: e.target.value } : p)))
-                    }
-                  />
-                ) : (
-                  product.badge
-                )}
-              </TableCell>
+              <TableCell>{product.title}</TableCell>
+              <TableCell>${product.price.toFixed(2)}</TableCell>
+              <TableCell>${product.priceWithoutDiscount}</TableCell>
+              <TableCell>{product.badge}</TableCell>
               <TableCell>{product.category}</TableCell>
+              <TableCell>{product.inventory}</TableCell>
               <TableCell>
-                {editingId === product._id ? (
-                  <Input
-                    type="number"
-                    value={product.inventory}
-                    onChange={(e) =>
-                      setProducts(
-                        products.map((p) => (p._id === product._id ? { ...p, inventory: Number(e.target.value) } : p)),
-                      )
-                    }
-                  />
-                ) : (
-                  product.inventory
-                )}
-              </TableCell>
-              <TableCell>
-                {editingId === product._id ? (
-                  <Button onClick={() => handleSave(product)} className="mr-2">
-                    Save
-                  </Button>
-                ) : (
-                  <Button onClick={() => handleEdit(product._id)} variant="outline" className="mr-2">
-                    Edit
-                  </Button>
-                )}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="mr-2" onClick={() => setSelectedProduct(product)}>
+                      Show Details
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>{selectedProduct?.title}</DialogTitle>
+                      <DialogDescription>
+                        <div className="mt-2">
+                          <p>
+                            <strong>Price:</strong> ${selectedProduct?.price.toFixed(2)}
+                          </p>
+                          <p>
+                            <strong>Price without Discount:</strong> ${selectedProduct?.priceWithoutDiscount.toFixed(2)}
+                          </p>
+                          <p>
+                            <strong>Badge:</strong> {selectedProduct?.badge}
+                          </p>
+                          <p>
+                            <strong>Category:</strong> {selectedProduct?.category}
+                          </p>
+                          <p>
+                            <strong>Inventory:</strong> {selectedProduct?.inventory}
+                          </p>
+                          <p>
+                            <strong>Description:</strong> {selectedProduct?.description}
+                          </p>
+                          <p>
+                            <strong>Tags:</strong> {selectedProduct?.tags.join(", ")}
+                          </p>
+                        </div>
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
                 <Button onClick={() => handleDelete(product._id)} variant="destructive">
                   Delete
                 </Button>
