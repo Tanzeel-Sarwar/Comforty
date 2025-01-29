@@ -11,6 +11,7 @@ import {
   BarChart,
   ChevronLeft,
   ChevronRight,
+  LogOut,
 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -40,7 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       const isAdminLoggedIn = localStorage.getItem("isAdminLoggedIn") === "true"
       const loginTime = Number.parseInt(localStorage.getItem("adminLoginTime") || "0", 10)
       const currentTime = Date.now()
-      const oneDay = 24 * 60 * 60 * 1000 // milliseconds in a day
+      const oneDay = 24 * 60 * 60 * 1000
 
       if (isAdminLoggedIn && currentTime - loginTime < oneDay) {
         setIsLoggedIn(true)
@@ -77,19 +78,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
       <div
         className={cn(
           "fixed left-0 top-0 h-full bg-white border-r transition-all duration-300 ease-in-out z-10",
-          sidebarExpanded ? "w-64" : "w-20",
+          sidebarExpanded ? "w-56" : "w-[70px]",
         )}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center h-16 flex-shrink-0 px-4 bg-[#116168]">
+          <div className="flex items-center h-16 flex-shrink-0 px-4 bg-[#13676e]">
             <Image src="/images/Logo Icon.png" alt="Comforty Logo" width={32} height={32} />
             {sidebarExpanded && <span className="ml-2 text-xl font-bold text-white">Comforty</span>}
           </div>
-          <div className="flex-1 flex flex-col overflow-y-auto">
+          <div className="flex-1 flex flex-col overflow-y-auto ">
             <nav className="flex-1 px-2 py-4 space-y-1">
               {navigation.map((item) => (
                 <Link
@@ -98,7 +98,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   className={cn(
                     "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                     pathname === item.href
-                      ? "bg-[#007580] text-white"
+                      ? "bg-[rgb(0,117,128)] text-white"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
                   )}
                 >
@@ -108,21 +108,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               ))}
             </nav>
           </div>
-          <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
+          <div className="flex flex-col border-t border-gray-200 p-4">
+            <Button
+              variant="outline"
+              size="icon"
+              className="mx-auto my-2"
+              onClick={() => setSidebarExpanded(!sidebarExpanded)}
+            >
+              {sidebarExpanded ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+            </Button>
             <UserButton afterSignOutUrl="/admin/login" />
+            <Button
+              onClick={handleLogout}
+              className="mt-4 flex items-center w-full justify-center bg-red-500 text-white hover:bg-red-600"
+            >
+              <LogOut className="h-6 w-6" />
+              {sidebarExpanded && <span>Logout</span>}
+            </Button>
           </div>
         </div>
-        <Button
-          variant="outline"
-          size="icon"
-          className="absolute -right-3 top-1/2 transform -translate-y-1/2"
-          onClick={() => setSidebarExpanded(!sidebarExpanded)}
-        >
-          {sidebarExpanded ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </Button>
       </div>
-
-      {/* Main content */}
       <div
         className={cn(
           "flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out",
@@ -138,4 +143,3 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     </div>
   )
 }
-

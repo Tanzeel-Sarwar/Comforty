@@ -1,74 +1,82 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useAdminAuth } from "@/hooks/useAdminAuth"
-import Loader from "../Loader"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
-import Image from "next/image"
-import { products, categories } from "@/lib/data"
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
+import Loader from "../Loader";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import Image from "next/image";
+import { products, categories } from "@/lib/data";
 
 interface DashboardData {
-  totalProducts: number
-  totalCategories: number
+  totalProducts: number;
+  totalCategories: number;
   randomProducts: {
-    _id: string
-    title: string
-    price: number
-    image: string
-  }[]
+    _id: string;
+    title: string;
+    price: number;
+    image: string;
+  }[];
   categoryDistribution: {
-    name: string
-    count: number
-  }[]
+    name: string;
+    count: number;
+  }[];
 }
 
 export default function DashboardPage() {
-  useAdminAuth()
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  useAdminAuth();
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const calculateDashboardData = () => {
-      const totalProducts = products.length
-      const totalCategories = categories.length
+  // useEffect(() => {
+  //   const calculateDashboardData = () => {
+  //     const totalProducts = products.length;
+  //     const totalCategories = categories.length;
 
-      // // Get 5 random products
-      // const randomProducts = [...products]
-      //   .sort(() => 0.5 - Math.random())
-      //   .slice(0, 5)
-      //   .map((product) => ({
-      //     _id: product._id,
-      //     title: product.title,
-      //     price: product.price,
-      //     image: product.image,
-      //   }))
+  //     // Get 5 random products
+  //     const randomProducts = [...products]
+  //       .sort(() => 0.5 - Math.random())
+  //       .slice(0, 5)
+  //       .map((product) => ({
+  //         _id: product._id,
+  //         title: product.title,
+  //         price: product.price,
+  //         image: product.image || "/placeholder.svg",
+  //       }));
 
-      // // Calculate category distribution
-      // const categoryDistribution = categories.map((category) => ({
-      //   name: category.title,
-      //   count: products.filter((product) => product.category === category._id).length,
-      // }))
+  //     // Calculate category distribution
+  //     const categoryDistribution = categories.map((category) => ({
+  //       name: category.title,
+  //       count: products.filter((product) => product.category === category._id).length,
+  //     }));
 
-      // setDashboardData({
-      //   totalProducts,
-      //   totalCategories,
-      //   randomProducts,
-      //   categoryDistribution,
-      // })
+  //     setDashboardData({
+  //       totalProducts,
+  //       totalCategories,
+  //       randomProducts,
+  //       categoryDistribution,
+  //     });
 
-      setIsLoading(false)
-    }
+  //     setIsLoading(false);
+  //   };
 
-    calculateDashboardData()
-  }, [])
+  //   calculateDashboardData();
+  // }, []);
 
   if (isLoading) {
-    return <Loader />
+    return <Loader />;
   }
 
   if (!dashboardData) {
-    return <div>Error loading dashboard data</div>
+    return <div className="text-red-500 text-center">Error loading dashboard data</div>;
   }
 
   return (
@@ -77,16 +85,16 @@ export default function DashboardPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+          <CardHeader>
+            <CardTitle>Total Products</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{dashboardData.totalProducts}</div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Categories</CardTitle>
+          <CardHeader>
+            <CardTitle>Total Categories</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{dashboardData.totalCategories}</div>
@@ -103,7 +111,7 @@ export default function DashboardPage() {
             {dashboardData.randomProducts.map((product) => (
               <div key={product._id} className="flex items-center space-x-4">
                 <Image
-                  src={product.image || "/placeholder.svg"}
+                  src={product.image}
                   alt={product.title}
                   width={50}
                   height={50}
@@ -130,12 +138,11 @@ export default function DashboardPage() {
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="count" fill="#8884d8" />
+              <Bar dataKey="count" fill="#007580" />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-
