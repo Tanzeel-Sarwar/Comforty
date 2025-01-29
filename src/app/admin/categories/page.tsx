@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
 import { sanityClient } from "@/lib/sanity"
 import { useAdminAuth } from "@/hooks/useAdminAuth"
 import { toast } from "@/hooks/use-toast"
@@ -90,26 +89,6 @@ export default function CategoriesPage() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this category?")) {
-      try {
-        await sanityClient.delete(id)
-        toast({
-          title: "Success",
-          description: "Category deleted successfully.",
-        })
-        fetchCategories()
-      } catch (error) {
-        console.error("Error deleting category:", error)
-        toast({
-          title: "Error",
-          description: "Failed to delete category. Please try again.",
-          variant: "destructive",
-        })
-      }
-    }
-  }
-
   if (isLoading) {
     return <Loader/>
   }
@@ -172,9 +151,6 @@ export default function CategoriesPage() {
                     </DialogHeader>
                   </DialogContent>
                 </Dialog>
-                <Button onClick={() => handleDelete(category._id)} variant="destructive">
-                  Delete
-                </Button>
               </TableCell>
             </TableRow>
           ))}

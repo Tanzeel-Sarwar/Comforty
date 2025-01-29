@@ -10,7 +10,7 @@ import { AlertCircle } from "lucide-react"
 import Image from "next/image"
 
 const ADMIN_USERNAME = "admin"
-const ADMIN_PASSWORD = "admin321"
+const ADMIN_PASSWORD = "admin123"
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("")
