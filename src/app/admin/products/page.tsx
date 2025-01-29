@@ -155,11 +155,12 @@ export default function ProductsPage() {
                           <DialogTitle>{selectedProduct.title}</DialogTitle>
                           <DialogDescription>
                             <div className="mt-2 space-y-2">
+                              <>
                               <p>
                                 <strong>Price:</strong> ${selectedProduct.price.toFixed(2)}
                               </p>
                               <p>
-                                <strong>Price without Discount:</strong> ${selectedProduct.priceWithoutDiscount.toFixed(2)}
+                                <strong>Price without Discount:</strong> ${selectedProduct.priceWithoutDiscount}
                               </p>
                               <p>
                                 <strong>Badge:</strong> {selectedProduct.badge}
@@ -176,6 +177,7 @@ export default function ProductsPage() {
                               <p>
                                 <strong>Tags:</strong> {selectedProduct.tags.join(", ")}
                               </p>
+                              </>
                             </div>
                           </DialogDescription>
                         </DialogHeader>
