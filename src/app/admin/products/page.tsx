@@ -73,29 +73,29 @@ export default function ProductsPage() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return
+  // const handleDelete = async (id: string) => {
+  //   if (!window.confirm("Are you sure you want to delete this product?")) return
 
-    try {
-      console.log(`Deleting product with ID: ${id}`)
-      await sanityClient.delete(id)
-      console.log("Product deleted successfully")
-      toast({
-        title: "Success",
-        description: "Product deleted successfully.",
-      })
+  //   try {
+  //     console.log(`Deleting product with ID: ${id}`)
+  //     await sanityClient.delete(id)
+  //     console.log("Product deleted successfully")
+  //     toast({
+  //       title: "Success",
+  //       description: "Product deleted successfully.",
+  //     })
 
-      // Update product list after deletion
-      setProducts((prevProducts) => prevProducts.filter((product) => product._id !== id))
-    } catch (error: any) {
-      console.error("Error deleting product:", error)
-      toast({
-        title: "Error",
-        description: `Failed to delete product: ${error.message || "Unknown error"}`,
-        variant: "destructive",
-      })
-    }
-  }
+  //     // Update product list after deletion
+  //     setProducts((prevProducts) => prevProducts.filter((product) => product._id !== id))
+  //   } catch (error: any) {
+  //     console.error("Error deleting product:", error)
+  //     toast({
+  //       title: "Error",
+  //       description: `Failed to delete product: ${error.message || "Unknown error"}`,
+  //       variant: "destructive",
+  //     })
+  //   }
+  // }
 
   if (isLoading) {
     return <Loader />
@@ -133,7 +133,7 @@ export default function ProductsPage() {
                   <Image src={product.image || "/placeholder.svg"} alt={product.title} width={50} height={50} />
                 </TableCell>
                 <TableCell>{product.title}</TableCell>
-                <TableCell>${product.price.toFixed(2)}</TableCell>
+                <TableCell>${product.price}</TableCell>
                 <TableCell>${product.priceWithoutDiscount}</TableCell>
                 <TableCell>{product.badge}</TableCell>
                 <TableCell>{product.category}</TableCell>
@@ -182,9 +182,9 @@ export default function ProductsPage() {
                       </DialogContent>
                     )}
                   </Dialog>
-                  <Button onClick={() => handleDelete(product._id)} variant="destructive">
+                  {/* <Button onClick={() => handleDelete(product._id)} variant="destructive">
                     Delete
-                  </Button>
+                  </Button> */}
                 </TableCell>
               </TableRow>
             ))
